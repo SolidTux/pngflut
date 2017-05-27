@@ -9,8 +9,8 @@ use std::time::Duration;
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
 
-    let x0 = 1250;
-    let y0 = 400;
+    let x0 = 750;
+    let y0 = 800;
 
     let mut data = Vec::new();
 
@@ -23,7 +23,7 @@ fn main() {
         }
     }
 
-    let nthreads = 500;
+    let nthreads = 1000;
 
     println!("Starting.");
 
