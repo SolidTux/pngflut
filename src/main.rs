@@ -1,10 +1,12 @@
 extern crate image;
+extern crate rand;
 
 use image::*;
 use std::net::TcpStream;
 use std::io::prelude::*;
 use std::thread;
 use std::time::Duration;
+use rand::distributions::{IndependentSample, Range};
 
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
@@ -34,11 +36,14 @@ fn main() {
 
     println!("Starting.");
 
+    let mut rng = rand::thread_rng();
     loop {
         let mut handles = Vec::new();
         for n in 0..nthreads {
             let d = data.clone();
-            let indoff = n * d.len() / nthreads;
+            let between = Range::new(0, d.len());
+            // let indoff = n * d.len() / nthreads;
+            let indoff = between.ind_sample(&mut rng);
             handles.push(thread::spawn(move || {
                 loop {
                     // match TcpStream::connect("94.45.231.39:1234") {
