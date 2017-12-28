@@ -47,7 +47,8 @@ fn main() {
                 loop {
                     // match TcpStream::connect("94.45.231.39:1234") {
                     let mut indices = indv.iter().cycle();
-                    match TcpStream::connect("151.217.47.77:8080") {
+                    // match TcpStream::connect("151.217.47.77:8080") {
+                    match TcpStream::connect("151.217.38.83:1234") {
                         Ok(mut stream) => {
                             stream.set_nodelay(true).expect("set_nodelay call failed");
                             loop {
