@@ -7,6 +7,7 @@ use std::io::prelude::*;
 use std::thread;
 use std::time::Duration;
 use rand::distributions::{IndependentSample, Range};
+use rand::Rng;
 
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
@@ -36,27 +37,32 @@ fn main() {
 
     println!("Starting.");
 
-    let mut rng = rand::thread_rng();
     loop {
         let mut handles = Vec::new();
-        for n in 0..nthreads {
+        for _ in 0..nthreads {
             let d = data.clone();
-            let between = Range::new(0, d.len());
-            // let indoff = n * d.len() / nthreads;
-            let indoff = between.ind_sample(&mut rng);
+            let mut indv: Vec<usize> = (0..d.len()).collect();
+            rand::thread_rng().shuffle(&mut indv);
             handles.push(thread::spawn(move || {
                 loop {
                     // match TcpStream::connect("94.45.231.39:1234") {
+                    let mut indices = indv.iter().cycle();
                     match TcpStream::connect("151.217.47.77:8080") {
                         Ok(mut stream) => {
                             stream.set_nodelay(true).expect("set_nodelay call failed");
-                            let mut i = indoff;
                             loop {
-                                i = (i + 1) % d.len();
-                                match stream.write_fmt(format_args!("{}", d[i])) {
-                                    Ok(_) => {}
-                                    Err(_) => {
-                                        println!("Write error, connecting again ..");
+                                // i = (i + 1) % d.len();
+                                match indices.next() {
+                                    Some(i) => {
+                                        match stream.write_fmt(format_args!("{}", d[*i])) {
+                                            Ok(_) => {}
+                                            Err(_) => {
+                                                println!("Write error, connecting again ..");
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    None => {
                                         break;
                                     }
                                 }
