@@ -9,7 +9,7 @@ use std::time::Duration;
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
 
-    let x0 = 500;
+    let x0 = 0;
     let y0 = 0;
 
     let mut data = Vec::new();
