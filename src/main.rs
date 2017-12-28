@@ -33,7 +33,7 @@ fn main() {
         }
     }
 
-    let nthreads = 1000;
+    let nthreads = 100;
 
     println!("Starting.");
 
