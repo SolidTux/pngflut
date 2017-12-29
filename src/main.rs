@@ -6,13 +6,12 @@ use std::net::TcpStream;
 use std::io::prelude::*;
 use std::thread;
 use std::time::Duration;
-use rand::distributions::{IndependentSample, Range};
 use rand::Rng;
 
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
 
-    let x0 = 800;
+    let x0 = 0;
     let y0 = 0;
 
     let mut data = Vec::new();
@@ -33,15 +32,17 @@ fn main() {
         }
     }
 
-    let nthreads = 500;
+    let nthreads = 50;
 
-    println!("Starting.");
-
+    let boxed_data = Box::new(data);
     loop {
         let mut handles = Vec::new();
-        for _ in 0..nthreads {
-            let d = data.clone();
-            let mut indv: Vec<usize> = (0..d.len()).collect();
+        let global_indv: Vec<usize> = (0..boxed_data.len()).collect();
+        for n in 0..nthreads {
+            println!("Starting {:2} / {:2}", n, nthreads);
+            thread::sleep(Duration::from_millis((1000. * rand::random::<f32>()) as u64));
+            let d = boxed_data.clone();
+            let mut indv = global_indv.clone();
             rand::thread_rng().shuffle(&mut indv);
             handles.push(thread::spawn(move || {
                 loop {
@@ -71,7 +72,7 @@ fn main() {
                         }
                         Err(_) => {
                             println!("Connection error, trying again ...");
-                            thread::sleep(Duration::from_secs(1))
+                            thread::sleep(Duration::from_millis((100. * rand::random::<f32>()) as u64));
                         }
                     }
                 }
