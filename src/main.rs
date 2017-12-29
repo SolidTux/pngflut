@@ -12,7 +12,7 @@ use rand::Rng;
 fn main() {
     let image = open("image.png").expect("image").to_rgba();
 
-    let x0 = 0;
+    let x0 = 800;
     let y0 = 0;
 
     let mut data = Vec::new();
